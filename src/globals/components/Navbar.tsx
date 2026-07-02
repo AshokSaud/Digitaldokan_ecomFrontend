@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom"
-import { useAppDispatch, useAppSelector } from "../../store/hooks"
+import {  useAppDispatch, useAppSelector } from "../../store/hooks"
 import { useEffect, useState } from "react"
-// import { fetchCartItems } from "../../store/cartSlice"
+import { fetchCartItems } from "../../store/cartSlice"
 
 
 function Navbar(){
     const reduxToken = useAppSelector((store)=>store.auth.user.token)
-    // const {items} = useAppSelector((store)=>store.cart)
+    const {items} = useAppSelector((store)=>store.cart)
     const localStorageToken = localStorage.getItem("tokenHoYo")
     const [isLoggedIn,setIsLoggedIn] = useState<boolean>(false)
     const dispatch = useAppDispatch()
@@ -14,7 +14,7 @@ function Navbar(){
     useEffect(()=>{
         setIsLoggedIn(!!localStorageToken || !!reduxToken)  // yo vaneko yo ho= if(reduxToken && localStorageToken){setIsLoggedIn(true)}
         if(isLoggedIn){
-        //   dispatch(fetchCartItems())
+          dispatch(fetchCartItems())
         }
 
     },[isLoggedIn])
@@ -45,6 +45,7 @@ function Navbar(){
         {
             isLoggedIn ? (
              <>
+                <span className="mr-[10px]"><Link to='/my-cart'>Cart<sup>{items.length >0 ? items.length : 0}</sup></Link></span> {/*items ma data xa vaney ? jati xa teti dekhauney :else 0 dekhauney*/}
                 <Link to='/logout'>
                 <button type="button" className="mr-5 py-3 px-8 text-sm bg-teal-500 hover:bg-teal-600 rounded text-white ">Logout
                      </button>
