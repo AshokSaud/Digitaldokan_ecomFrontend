@@ -79,8 +79,6 @@ function CategoryTable({ categories }: { categories: ICategory[] }) {
       </div>
     </div>
 
-
-
   )
 }
 export default CategoryTable
