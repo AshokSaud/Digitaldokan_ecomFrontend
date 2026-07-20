@@ -3,6 +3,7 @@ import { Status } from "../globals/types/type";
 import type { AppDispatch } from "./store";
 import { API, APIWITHTOKEN } from "../http";
 import Product from "../pages/product/Product";
+import type { IProduct } from "../pages/admin/products/components/ProductModal";
 
 
 interface ICategory{
@@ -41,18 +42,21 @@ const adminProductSlice = createSlice({
         setProducts(state:IAdminProduct,action:PayloadAction<IProductDetail[]>){
             state.products = action.payload
         },
+        addProducts(state:IAdminProduct,action:PayloadAction<IProductDetail>){
+            state.products.push(action.payload) 
+        },
         setStatus(state:IAdminProduct,action:PayloadAction<Status>){
             state.status = action.payload
         },
         setDeleteProducts(state:IAdminProduct,action:PayloadAction<string>){
             const index = state.products.findIndex(product=>product.id === action.payload)
-            if(index === -1){
+            if(index !== -1){
                 state.products.splice(index,1)
             }
         }
     }
 })
-export const {setProducts,setStatus,setDeleteProducts} = adminProductSlice.actions
+export const {setProducts,setStatus,setDeleteProducts,addProducts} = adminProductSlice.actions
 export default adminProductSlice.reducer
 
 export function fetchAdminProducts(){
@@ -60,7 +64,7 @@ export function fetchAdminProducts(){
         try {
             const response = await API.get("/product")
             if(response.status === 200){
-                dispatch(setStatus(Status.SUCCESS))
+               
                 dispatch(setProducts(response.data.data))
             }else{
                 dispatch(setStatus(Status.ERROR))
@@ -77,6 +81,25 @@ export function deleteAdminProducts(id:string){
             if(response.status === 200){
                 dispatch(setStatus(Status.SUCCESS))
                 dispatch(setDeleteProducts(id))
+            }else{
+                dispatch(setStatus(Status.ERROR))
+            }
+        } catch (error) {
+            dispatch(setStatus(Status.ERROR))
+        }
+    }
+}
+export function addProduct(data : IProduct){
+    return async function addProductThunk(dispatch:AppDispatch){
+        try {
+            const response = await APIWITHTOKEN.post("/product",data,{
+                headers:{
+                    "Content-Type" : "multipart/form-data"     //backend ma product add garda image gayera xa vaney headers multipart/form-data rakhney
+                }
+            })
+            if(response.status === 200){
+                dispatch(setStatus(Status.SUCCESS))
+                dispatch(addProducts(response.data.data))
             }else{
                 dispatch(setStatus(Status.ERROR))
             }

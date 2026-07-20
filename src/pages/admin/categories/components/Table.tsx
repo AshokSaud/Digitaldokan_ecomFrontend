@@ -3,23 +3,23 @@ import type { ICategory } from "../Categories"
 import { useAppDispatch } from "../../../../store/hooks"
 import { deleteCategories } from "../../../../store/adminCategorySlice"
 import { useCallback, useState } from "react"
-import PopUpModel from "./popUpModel"
+import PopUpModal from "./PopUpModal"
 
 
 function CategoryTable({ categories }: { categories: ICategory[] }) {
   const [searchTerm,setSearchTerm] = useState<string>("")
-  const [isPopUpModelOpen,setIsPopUpModelOpen] = useState(false)
+  const [isPopUpModalOpen,setIsPopUpModalOpen] = useState(false)
   const dispatch = useAppDispatch()
   const deleteCategory = async(id: string) => {
     id && dispatch(deleteCategories(id))
   }
   const filteredCategories = categories.filter((category)=>category.categoryName.toLowerCase().includes(searchTerm.toLowerCase()) || category.id.includes(searchTerm))
-  const openModel = useCallback(()=>setIsPopUpModelOpen(true),[])//wrapped in useCallback func-bcz search garda component recreate vako vai hunxa(everytime closeModel-func-props-call hunxa so) teslai prevent garnu parxa for optimization
-  const closeModel = useCallback(()=>setIsPopUpModelOpen(false),[]) 
+  const openModal = useCallback(()=>setIsPopUpModalOpen(true),[])//wrapped in useCallback func-bcz search garda component recreate vako vai hunxa(everytime closeModel-func-props-call hunxa so) teslai prevent garnu parxa for optimization
+  const closeModal = useCallback(()=>setIsPopUpModalOpen(false),[]) 
   return (
     <div className="flex flex-col">
       <div className=" overflow-x-auto">
-        {isPopUpModelOpen && <PopUpModel closeModel={closeModel}/>}
+        {isPopUpModalOpen && <PopUpModal closeModal={closeModal}/>}
         <div className="min-w-full inline-block align-middle">
           <div className="relative  text-gray-500 focus-within:text-gray-900 mb-4">
             <div className="absolute inset-y-0 left-1 flex items-center pl-3 pointer-events-none ">
@@ -32,7 +32,7 @@ function CategoryTable({ categories }: { categories: ICategory[] }) {
             <div className="flex justify-between">
             <input onChange={(e)=>setSearchTerm(e.target.value)} type="text" id="default-search" className="block w-80 h-11 pr-5 pl-12 py-2.5 text-base font-normal shadow-xs
              text-gray-900 bg-transparent border border-gray-300 rounded-full placeholder-gray-400 focus:outline-none" placeholder="Search" />
-            <button className="bg-blue-500 rounded text-white p-2 cursor-pointer" onClick={openModel}>+ Category</button>
+            <button className="bg-blue-500 rounded text-white p-2 cursor-pointer" onClick={openModal}>+ Category</button>
             </div>
           </div>
           <div className="overflow-hidden ">

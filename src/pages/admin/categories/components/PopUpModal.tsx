@@ -3,11 +3,11 @@ import { useAppDispatch, useAppSelector } from "../../../../store/hooks"
 import { addCategory, resetStatus } from "../../../../store/adminCategorySlice"
 import { Status } from "../../../../globals/types/type"
 
-interface ModelProps {
-    closeModel: () => void
+interface ModalProps {
+    closeModal: () => void
 }
 
-function PopUpModel({ closeModel }: ModelProps) {
+function PopUpModal({ closeModal }: ModalProps) {
     const dispatch = useAppDispatch()
     const [categoryName, setCategoryName] = useState<string>("")
     const { status } = useAppSelector((store) => store.categories)
@@ -24,7 +24,7 @@ function PopUpModel({ closeModel }: ModelProps) {
     useEffect(()=>{
         if(status === Status.SUCCESS){
             setLoading(false)
-            closeModel()
+            closeModal()
             dispatch(resetStatus())
         }
     },[status])
@@ -36,7 +36,7 @@ function PopUpModel({ closeModel }: ModelProps) {
                 <div className="relative w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Add Category</h3>
-                        <button onClick={closeModel} id="closeModalButton" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer">
+                        <button onClick={closeModal} id="closeModalButton" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer">
                             <svg className="h-4 w-4 inline-block ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                             </svg>
@@ -51,7 +51,7 @@ function PopUpModel({ closeModel }: ModelProps) {
                               dark:placeholder-gray-500" placeholder="eg.Electronics,Food..." required />
                             </div>
                             <div className="flex justify-end gap-3">
-                                <button onClick={closeModel} id="cancelButton" className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 cursor-pointer">
+                                <button onClick={closeModal} id="cancelButton" className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 cursor-pointer">
                                     Cancel
                                 </button>
                                 <button id="submitUrlButton" className="flex items-center justify-center px-4 py-2 text-sm font-medium
@@ -72,4 +72,4 @@ function PopUpModel({ closeModel }: ModelProps) {
         </>
     )
 }
-export default PopUpModel
+export default PopUpModal
