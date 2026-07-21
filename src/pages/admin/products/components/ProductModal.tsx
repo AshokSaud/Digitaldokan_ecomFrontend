@@ -8,6 +8,7 @@ interface ProductModalProps {
   closeModal: () => void
 }
 export interface IProduct{
+  id? :string,
   productName : string,
   productDescription :string,
   productPrice :number,

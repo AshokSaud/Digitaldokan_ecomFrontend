@@ -2,14 +2,19 @@ import { useCallback, useState } from "react"
 import { deleteAdminProducts, type IProductDetail } from "../../../../store/adminProductSlice"
 import { useAppDispatch } from "../../../../store/hooks"
 import ProductModal from "./ProductModal"
+import { Link } from "react-router-dom"
 
 
 function AdminProductTable({products}: {products:IProductDetail[]}) {
+  const [searchTerm, setSearchTerm] = useState<string>("")
   const [isModalOpen,setIsModalOpen] = useState(false)
   const dispatch = useAppDispatch()
   const deleteProduct  = async(id:string)=>{
     id && dispatch(deleteAdminProducts(id))
   }
+
+  const filteredProducts = products.filter((product)=>product.productName.toLowerCase().includes(searchTerm.toLowerCase()) || product.id.toLowerCase().includes(searchTerm.toLowerCase()))
+
   const openModal = useCallback(()=>setIsModalOpen(true),[])
   const closeModal = useCallback(()=>setIsModalOpen(false),[]) 
 
@@ -28,7 +33,7 @@ function AdminProductTable({products}: {products:IProductDetail[]}) {
               </svg>
             </div>
             <div className="flex justify-between">
-            <input  type="text" id="default-search" className="block w-80 h-11 pr-5 pl-12 py-2.5 text-base font-normal shadow-xs
+            <input onChange={(e)=>setSearchTerm(e.target.value)} type="text" id="default-search" className="block w-80 h-11 pr-5 pl-12 py-2.5 text-base font-normal shadow-xs
              text-gray-900 bg-transparent border border-gray-300 rounded-full placeholder-gray-400 focus:outline-none" placeholder="Search" />
             <button className="bg-blue-500 rounded text-white p-2 cursor-pointer" onClick={openModal}>+ Product</button>
             </div>
@@ -39,19 +44,24 @@ function AdminProductTable({products}: {products:IProductDetail[]}) {
                 <tr className="bg-gray-50">
 
                   <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize"> Product ID </th>
-                  <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize"> Product Name </th>
+                  <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">  Name </th>
+                  <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">  Stock </th>
+                  <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize">  Price </th>
                   <th scope="col" className="p-5 text-left text-sm leading-6 font-semibold text-gray-900 capitalize rounded-t-xl"> Actions </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-300 ">
                
                      {
-                      products.length > 0 && products.map((product)=>{
+                      filteredProducts.length > 0 && filteredProducts.map((product)=>{
                         return(
                            <tr key={product?.id} className="bg-white transition-all duration-500 hover:bg-gray-50">
-
-                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"> {product?.id}</td>
+                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
+                        <Link to={`/products/${product?.id}`} > {product?.id}</Link> // Link should be wrapped inside td otherwise hydration error will occur
+                        </td>
                         <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"> {product?.productName}</td>
+                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"> {product?.productTotalStock}</td>
+                        <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900"> {product?.productPrice}</td>
                         <td className=" p-5 ">
                           <div className="flex items-center gap-1">
                             <button className="p-2  rounded-full  group transition-all duration-500  flex item-center">

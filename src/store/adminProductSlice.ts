@@ -1,9 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/type";
-import type { AppDispatch } from "./store";
+import type { AppDispatch, RootState } from "./store";
 import { API, APIWITHTOKEN } from "../http";
 import Product from "../pages/product/Product";
 import type { IProduct } from "../pages/admin/products/components/ProductModal";
+import { act } from "react";
+
 
 
 interface ICategory{
@@ -27,12 +29,14 @@ Category:ICategory
 
 interface IAdminProduct{
     products: IProductDetail[],
-    status: Status
+    status: Status,
+    product: null | IProductDetail
 }
 
 const initialState:IAdminProduct ={
     products: [],
-    status:Status.LOADING
+    status:Status.LOADING,
+    product : null
 }
 
 const adminProductSlice = createSlice({
@@ -45,6 +49,9 @@ const adminProductSlice = createSlice({
         addProducts(state:IAdminProduct,action:PayloadAction<IProductDetail>){
             state.products.push(action.payload) 
         },
+        setSingleProduct(state:IAdminProduct,action:PayloadAction<IProductDetail>){
+            state.product = action.payload
+        },
         setStatus(state:IAdminProduct,action:PayloadAction<Status>){
             state.status = action.payload
         },
@@ -56,7 +63,7 @@ const adminProductSlice = createSlice({
         }
     }
 })
-export const {setProducts,setStatus,setDeleteProducts,addProducts} = adminProductSlice.actions
+export const {setProducts,setStatus,setDeleteProducts,addProducts,setSingleProduct} = adminProductSlice.actions
 export default adminProductSlice.reducer
 
 export function fetchAdminProducts(){
@@ -105,6 +112,30 @@ export function addProduct(data : IProduct){
             }
         } catch (error) {
             dispatch(setStatus(Status.ERROR))
+        }
+    }
+}
+export function fetchSingleProduct(id:string){
+    return async function fetchSingleProductThunk(dispatch:AppDispatch,getState:()=>RootState ){  //yo RootState ./store dekhi aako ho not from redux toolkit
+        const store = getState()
+        const productExists = store.adminProduct.products.find((product:IProductDetail)=>product.id === id)
+        if(productExists){
+            dispatch(setSingleProduct(productExists))
+            dispatch(setStatus(Status.SUCCESS))
+        }else{
+
+            try {
+                const response = await APIWITHTOKEN.get("/product/" + id)
+                if(response.status === 200){
+                    dispatch(setStatus(Status.SUCCESS))
+                    dispatch(setSingleProduct(response.data.data.length >0 && response.data.data[0]))
+                }else{
+                    dispatch(setStatus(Status.ERROR))
+                }
+            } catch (error) {
+                console.log(error)
+                dispatch(setStatus(Status.ERROR))
+            }
         }
     }
 }
