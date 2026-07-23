@@ -17,6 +17,14 @@ import AdminStats from './pages/admin/stats/AdminStats'
 import User from './pages/admin/users/Users'
 import AdminProduct from './pages/admin/products/AdminProduct'
 import ProductDescription from './pages/admin/productDescription/ProductDescription'
+import AdminOrder from './pages/admin/orders/AdminOrders'
+import AdminOrderDetail from './pages/admin/orderDetail/AdminOrderDetail'
+import { io } from 'socket.io-client'
+export const socket = io("http://localhost:4000",{
+  auth: {
+    token : localStorage.getItem("tokenHoYo")
+  }
+})
 
 function App() {
 
@@ -39,6 +47,8 @@ function App() {
           <Route path='/admin/users' element={<User />} />
           <Route path='/admin/products' element={<AdminProduct />} />
           <Route path='/admin/products/:id' element={<ProductDescription />} />
+          <Route path='/admin/orders' element={<AdminOrder />} />
+          <Route path='/admin/orders/:id' element={<AdminOrderDetail />} />
 
         </Routes>
       </BrowserRouter>

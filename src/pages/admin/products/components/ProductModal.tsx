@@ -31,7 +31,7 @@ function ProductModal({ closeModal }: ProductModalProps) {
     const {name,value} = e.target
     setData({
       ...data,
-      [name] : name == "productImage" ? e.target.files[0] as File : value
+      [name] : name === "productImage" ? (e.target as HTMLInputElement).files?.[0] : value
     })
   }
   const {category} = useAppSelector((store) => store.categories)
